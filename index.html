@@ -1,108 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NEELX Trader | Mobile Journal</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f172a%22/><path d=%22M30 40v20M30 45h6v10h-6zM50 30v40M50 35h6v30h-6zM70 50v20M70 55h6v10h-6z%22 stroke=%22%23818cf8%22 stroke-width=%224%22 fill=%22none%22/></svg>">
+    <title>NEELX PIPS | Mobile Journal</title>
+    <!-- Premium SVG Favicon matching the modern candles logo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%23090d16%22/><path d=%22M30 38v24M30 44h6v12h-6z%22 fill=%22%23ef4444%22 stroke=%22%23ef4444%22 stroke-width=%221.5%22/><path d=%22M50 25v50M50 32h6v36h-6z%22 fill=%22%2310b981%22 stroke=%22%2310b981%22 stroke-width=%221.5%22/><path d=%22M70 45v18M70 49h6v10h-6z%22 fill=%22%2310b981%22 stroke=%22%2310b981%22 stroke-width=%221.5%22/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: #030712;
+            color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
             padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .safe-top { padding-top: env(safe-area-inset-top); }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+
+        .premium-card {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(9, 13, 22, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
 
         .trade-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .trade-card:active {
             transform: scale(0.98);
-            background-color: #f1f5f9;
+            background: rgba(17, 24, 39, 0.95);
         }
 
         .details-pane {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .details-pane.open {
             max-height: 800px;
         }
 
+        /* Pure Premium Gradients for trades */
         .win-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .loss-gradient { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .be-gradient { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
-        .running-gradient { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .loss-gradient { background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); }
+        .be-gradient { background: linear-gradient(135deg, #64748b 0%, #475569 100%); }
+        .running-gradient { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
 
-        @keyframes pulse-blue {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .animate-pulse-slow {
-            animation: pulse-blue 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+        .neon-glow-win { box-shadow: 0 0 15px rgba(16, 185, 129, 0.15); }
+        .neon-glow-loss { box-shadow: 0 0 15px rgba(244, 63, 94, 0.15); }
+        .neon-glow-running { box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
 
-        #tradeList { min-height: 300px; }
+        @keyframes pulse-radial {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.1); }
+        }
+        .radial-glow {
+            animation: pulse-radial 8s infinite alternate;
+        }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen selection:bg-indigo-500 selection:text-white">
+    <!-- Ambient Radial Glow Behind Header -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none radial-glow z-0"></div>
+
     <div id="modalContainer"></div>
 
     <!-- Header / Stats Section -->
-    <header class="safe-top bg-white border-b border-slate-100 sticky top-0 z-50">
+    <header class="safe-top bg-gray-950/80 backdrop-blur-xl border-b border-gray-900 sticky top-0 z-50">
         <div class="px-5 py-4">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="bg-slate-900 p-2 rounded-xl shadow-lg">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                            <polyline points="16 7 22 7 22 13"></polyline>
+                    <div class="bg-gradient-to-br from-gray-900 to-gray-950 p-2 rounded-xl border border-gray-800 shadow-xl flex-shrink-0">
+                        <!-- Neon Candlestick Brand Icon -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="10" width="4" height="6" rx="1" fill="#ef4444" />
+                            <line x1="5" y1="4" x2="5" y2="20" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
+                            
+                            <rect x="10" y="5" width="4" height="12" rx="1" fill="#10b981" />
+                            <line x1="12" y1="2" x2="12" y2="22" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
+                            
+                            <rect x="17" y="11" width="4" height="5" rx="1" fill="#10b981" />
+                            <line x1="19" y1="6" x2="19" y2="18" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg font-extrabold text-slate-900 leading-none">NEELX Trader</h1>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Mobile Terminal</p>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-base font-extrabold text-white tracking-tight leading-none">
+                                NEELX <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-black">PIPS</span>
+                            </h1>
+                            <!-- $200 to $500 Challenge Subtitle badge -->
+                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 uppercase tracking-wider whitespace-nowrap">
+                                $200 to $500 Challenge
+                            </span>
+                        </div>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Mobile Pro Terminal</p>
                     </div>
                 </div>
-                <div id="syncStatus" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-tighter border border-emerald-100">
+                <div id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-black uppercase tracking-wider border border-emerald-500/20 flex-shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     LIVE SYNC
                 </div>
             </div>
 
-            <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-xl shadow-slate-200 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="white"><path d="M22 7L13.5 15.5L8.5 10.5L2 17H22V7Z"/></svg>
-                </div>
+            <!-- Dashboard Card -->
+            <div class="premium-card rounded-2xl p-5 relative overflow-hidden border border-gray-800">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
                 <div class="relative z-10">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Balance</p>
-                    <div class="flex items-baseline gap-2">
-                        <h2 id="currentBalance" class="text-3xl font-black">$0.00</h2>
-                        <span id="pnlPercent" class="text-xs font-bold text-emerald-400">+0.00%</span>
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Current Balance</p>
+                        <span id="pnlValue" class="text-xs font-mono font-bold text-emerald-400">+$0.00</span>
                     </div>
-                    <div class="flex gap-4 mt-4 pt-4 border-t border-slate-800">
-                        <div>
-                            <p class="text-[9px] font-bold text-slate-500 uppercase">Initial</p>
-                            <p id="displayCap" class="text-sm font-bold text-slate-200">$0.00</p>
+                    <div class="flex items-baseline gap-2">
+                        <h2 id="currentBalance" class="text-3xl font-black text-white font-mono">$0.00</h2>
+                        <span id="pnlPercent" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">+0.00%</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-gray-900">
+                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
+                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Initial Cap</p>
+                            <p id="displayCap" class="text-xs font-bold font-mono text-gray-300 mt-0.5">$0.00</p>
                         </div>
-                        <div>
-                            <p class="text-[9px] font-bold text-slate-500 uppercase">Win Rate</p>
-                            <p id="statWinRate" class="text-sm font-bold text-indigo-400">0%</p>
+                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
+                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Win Rate</p>
+                            <p id="statWinRate" class="text-xs font-bold text-indigo-400 mt-0.5">0%</p>
                         </div>
-                        <div>
-                            <p class="text-[9px] font-bold text-slate-500 uppercase">Trades</p>
-                            <p id="statTotal" class="text-sm font-bold text-slate-200">0</p>
+                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
+                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Total Trades</p>
+                            <p id="statTotal" class="text-xs font-bold font-mono text-gray-300 mt-0.5">0</p>
                         </div>
                     </div>
                 </div>
@@ -110,38 +147,66 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 px-5 py-6">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Recent Activity</h3>
-            <div class="text-[10px] font-bold text-slate-400">
+    <!-- Main Content Container -->
+    <main class="flex-1 px-5 py-4 z-10">
+        <!-- Dashboard Filters & Controls -->
+        <div class="mb-4">
+            <div class="flex gap-1 bg-gray-950 p-1 rounded-xl border border-gray-900">
+                <button onclick="filterTrades('all')" id="filter-all" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all bg-gray-900 text-white">All</button>
+                <button onclick="filterTrades('Win')" id="filter-Win" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Wins</button>
+                <button onclick="filterTrades('Loss')" id="filter-Loss" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Losses</button>
+                <button onclick="filterTrades('Running')" id="filter-Running" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Active</button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-5 relative">
+            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search asset (e.g. XAUUSD)..." class="w-full bg-gray-950 border border-gray-900 rounded-xl px-4 py-3 pl-10 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 transition-colors">
+            <div class="absolute left-3.5 top-3.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Active Pip Feeds</h3>
+            <div class="text-[10px] font-bold text-indigo-400">
                 <span id="statDuration">0</span> TRADING DAYS
             </div>
         </div>
 
-        <div id="tradeList" class="space-y-4">
-            <div class="animate-pulse flex flex-col gap-4">
-                <div class="h-24 bg-slate-200 rounded-2xl w-full"></div>
-                <div class="h-24 bg-slate-200 rounded-2xl w-full"></div>
+        <!-- Trade Cards List Container -->
+        <div id="tradeList" class="space-y-3">
+            <div class="animate-pulse flex flex-col gap-3">
+                <div class="h-20 bg-gray-900/50 border border-gray-900 rounded-2xl w-full"></div>
+                <div class="h-20 bg-gray-900/50 border border-gray-900 rounded-2xl w-full"></div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-100 px-6 py-4 pb-8">
+    <!-- Bottom Footer -->
+    <footer class="bg-gray-950/80 backdrop-blur-md border-t border-gray-900 px-6 py-4 pb-8 mt-auto z-10">
         <div class="flex justify-between items-center">
-            <p class="text-[10px] text-slate-400 font-bold uppercase">&copy; 2026 Swapneel Das</p>
-            <button onclick="showModal('disclaimer')" class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Disclaimer</button>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                <p class="text-[9px] text-gray-500 font-extrabold uppercase tracking-wider">&copy; 2026 Swapneel Das</p>
+            </div>
+            <button onclick="showModal('disclaimer')" class="text-[9px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">Disclaimer</button>
         </div>
     </footer>
 
     <script>
         let trades = [];
         let initialCapital = 0;
+        let currentFilter = 'all';
+        let searchQuery = '';
 
         async function loadData() {
             try {
+                // Fetch direct read-only data from the data.json source
                 const response = await fetch(`data.json?t=${Date.now()}`);
-                if (!response.ok) throw new Error("Could not find data.json");
+                if (!response.ok) {
+                    throw new Error("Could not load data.json. Ensure file exists and is populated.");
+                }
                 
                 const data = await response.json();
                 trades = data.trades || [];
@@ -150,7 +215,20 @@
                 render();
             } catch (err) {
                 console.error(err);
-                document.getElementById('tradeList').innerHTML = `<div class="text-center py-10 text-rose-500 text-xs font-bold">DATA ERROR</div>`;
+                const syncBadge = document.getElementById('syncStatus');
+                if (syncBadge) {
+                    syncBadge.innerHTML = 'SYNC ERROR';
+                    syncBadge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-[9px] font-black uppercase tracking-wider border border-rose-500/20";
+                }
+                document.getElementById('tradeList').innerHTML = `
+                    <div class="text-center py-12 bg-gray-950/30 border border-rose-950/50 rounded-2xl">
+                        <svg class="mx-auto mb-3 text-rose-500/60" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p class="text-xs font-extrabold text-rose-400 uppercase tracking-widest">Failed to load data.json</p>
+                        <p class="text-[10px] text-gray-600 mt-1 font-mono">Please verify the file setup.</p>
+                    </div>
+                `;
             }
         }
 
@@ -170,9 +248,15 @@
             
             document.getElementById('displayCap').innerText = `$${initialCapital.toLocaleString()}`;
             document.getElementById('currentBalance').innerText = `$${current.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            
+            const pnlValueEl = document.getElementById('pnlValue');
+            pnlValueEl.innerText = `${net >= 0 ? '+' : ''}$${net.toFixed(2)}`;
+            pnlValueEl.className = `text-xs font-mono font-bold ${net >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
             const pnlEl = document.getElementById('pnlPercent');
             pnlEl.innerText = `${net >= 0 ? '+' : ''}${growth}%`;
-            pnlEl.className = `text-xs font-bold ${net >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            pnlEl.className = `text-[10px] font-extrabold px-2 py-0.5 rounded ${net >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`;
+            
             document.getElementById('statTotal').innerText = trades.length;
             const wr = (wins + losses) > 0 ? ((wins / (wins + losses)) * 100).toFixed(0) : 0;
             document.getElementById('statWinRate').innerText = `${wr}%`;
@@ -182,91 +266,153 @@
         function toggleDetails(id) {
             const pane = document.getElementById(`pane-${id}`);
             const chevron = document.getElementById(`chev-${id}`);
+            if (!pane) return;
             const isOpen = pane.classList.toggle('open');
             chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function filterTrades(filterType) {
+            currentFilter = filterType;
+            const buttons = ['all', 'Win', 'Loss', 'Running'];
+            buttons.forEach(b => {
+                const btn = document.getElementById(`filter-${b}`);
+                if (b === filterType) {
+                    btn.className = "flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all bg-gray-900 text-white";
+                } else {
+                    btn.className = "flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white";
+                }
+            });
+            render();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            render();
         }
 
         function render() {
             const container = document.getElementById('tradeList');
             container.innerHTML = '';
 
-            const sortedTrades = [...trades].sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
+            let filteredTrades = [...trades];
 
-            sortedTrades.forEach((trade, index) => {
+            // Apply Filters
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'Running') {
+                    filteredTrades = filteredTrades.filter(t => !t.exit || t.exit === "" || t.result === 'Running');
+                } else {
+                    filteredTrades = filteredTrades.filter(t => t.result === currentFilter);
+                }
+            }
+
+            // Apply Search Query
+            if (searchQuery.trim() !== '') {
+                filteredTrades = filteredTrades.filter(t => t.asset.toLowerCase().includes(searchQuery));
+            }
+
+            // Sort trades chronologically descending
+            filteredTrades.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
+
+            if (filteredTrades.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-gray-950/30 border border-gray-900/50 rounded-2xl">
+                        <svg class="mx-auto mb-3 text-gray-700" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <p class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">No matching pip feeds</p>
+                    </div>
+                `;
+                calculateStats();
+                return;
+            }
+
+            filteredTrades.forEach((trade, index) => {
                 const tradeId = trade.id || index;
-                const isRunning = !trade.exit || trade.exit === "";
+                const isRunning = !trade.exit || trade.exit === "" || trade.result === 'Running';
                 const net = (parseFloat(trade.pnl) || 0) - (parseFloat(trade.commission) || 0);
                 
-                // Set color indicators
                 let gradClass = 'be-gradient';
+                let glowClass = '';
                 let pnlDisplay = `$${net.toFixed(2)}`;
                 let statusLabel = "CLOSED";
-                let statusColor = "text-slate-400";
+                let statusColor = "text-gray-400";
 
                 if (isRunning) {
-                    gradClass = 'running-gradient animate-pulse-slow';
-                    pnlDisplay = "---";
-                    statusLabel = "RUNNING";
-                    statusColor = "text-blue-500";
+                    gradClass = 'running-gradient';
+                    glowClass = 'neon-glow-running';
+                    pnlDisplay = "LIVE";
+                    statusLabel = "ACTIVE RUN";
+                    statusColor = "text-blue-400";
                 } else if (trade.result === 'Win') {
                     gradClass = 'win-gradient';
-                    statusColor = "text-emerald-500";
+                    glowClass = 'neon-glow-win';
+                    statusColor = "text-emerald-400";
                 } else if (trade.result === 'Loss') {
                     gradClass = 'loss-gradient';
-                    statusColor = "text-rose-500";
+                    glowClass = 'neon-glow-loss';
+                    statusColor = "text-rose-400";
                 }
 
                 const card = document.createElement('div');
-                card.className = "trade-card bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-4";
-                card.onclick = () => toggleDetails(tradeId);
+                card.className = `trade-card bg-gray-950/50 border border-gray-900 rounded-2xl overflow-hidden mb-3 hover:border-gray-800 ${glowClass}`;
                 
                 card.innerHTML = `
-                    <div class="p-4 flex items-center gap-4">
+                    <div class="p-4 flex items-center gap-4 cursor-pointer" onclick="toggleDetails('${tradeId}')">
                         <div class="w-1.5 h-10 rounded-full ${gradClass}"></div>
                         <div class="flex-1">
                             <div class="flex justify-between items-start">
-                                <h4 class="font-black text-slate-900 uppercase tracking-tight">${trade.asset}</h4>
-                                <span class="text-xs font-black ${isRunning ? 'text-blue-500' : (net >= 0 ? 'text-emerald-600' : 'text-rose-500')}">${pnlDisplay}</span>
+                                <h4 class="font-extrabold text-white text-sm uppercase tracking-tight flex items-center gap-1.5">
+                                    ${trade.asset}
+                                    ${trade.pips ? `<span class="text-[9px] font-mono font-bold bg-gray-900 text-gray-400 border border-gray-800/80 px-1.5 py-0.2 rounded">${trade.pips > 0 ? '+' : ''}${trade.pips} pips</span>` : ''}
+                                </h4>
+                                <span class="text-xs font-mono font-extrabold ${isRunning ? 'text-blue-400' : (net >= 0 ? 'text-emerald-400' : 'text-rose-400')}">
+                                    ${pnlDisplay}
+                                </span>
                             </div>
-                            <div class="flex justify-between items-center mt-0.5">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase">${trade.date}</p>
-                                <span class="text-[9px] font-black ${statusColor} uppercase tracking-widest">${statusLabel} • ${trade.r_multiple || '0'}R</span>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[9px] font-bold text-gray-500 uppercase font-mono">${trade.date}</p>
+                                <span class="text-[9px] font-black ${statusColor} uppercase tracking-widest flex items-center gap-1">
+                                    <span class="w-1 h-1 rounded-full ${isRunning ? 'bg-blue-400 animate-ping' : (net >= 0 ? 'bg-emerald-400' : 'bg-rose-400')}"></span>
+                                    ${statusLabel} • ${trade.r_multiple || '0'}R
+                                </span>
                             </div>
                         </div>
-                        <div id="chev-${tradeId}" class="transition-transform duration-300">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <div id="chev-${tradeId}" class="transition-transform duration-300 text-gray-600">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
                     </div>
                     
-                    <div id="pane-${tradeId}" class="details-pane bg-slate-50">
-                        <div class="p-5 grid grid-cols-2 gap-y-4 gap-x-6 border-t border-slate-100">
+                    <div id="pane-${tradeId}" class="details-pane bg-gray-950/80 border-t border-gray-900">
+                        <div class="p-5 grid grid-cols-2 gap-y-4 gap-x-6">
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status</label>
-                                <p class="text-xs font-bold ${statusColor}">${statusLabel}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Execution Status</label>
+                                <p class="text-xs font-extrabold ${statusColor}">${statusLabel}</p>
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Entry Price</label>
-                                <p class="text-xs font-mono font-bold">${trade.entry || '---'}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Entry Target</label>
+                                <p class="text-xs font-mono font-bold text-white">${trade.entry || '---'}</p>
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Stop Loss</label>
-                                <p class="text-xs font-mono font-bold text-rose-400">${trade.sl || trade.stop_loss || '---'}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Absolute Protection (SL)</label>
+                                <p class="text-xs font-mono font-bold text-rose-500">${trade.sl || trade.stop_loss || '---'}</p>
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Target / Exit</label>
-                                <p class="text-xs font-mono font-bold ${isRunning ? 'text-slate-300' : 'text-emerald-500'}">${trade.exit || trade.tp || 'OPEN'}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Target Limit / Exit</label>
+                                <p class="text-xs font-mono font-bold ${isRunning ? 'text-gray-600' : 'text-emerald-400'}">${trade.exit || trade.tp || 'OPEN FEED'}</p>
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Risk Taken</label>
-                                <p class="text-xs font-mono font-bold text-slate-600">$${parseFloat(trade.size || 0).toFixed(2)}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Risk Exposure</label>
+                                <p class="text-xs font-mono font-bold text-gray-400">$${parseFloat(trade.size || 0).toFixed(2)}</p>
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Fees</label>
-                                <p class="text-xs font-mono font-bold text-slate-400">$${parseFloat(trade.commission || 0).toFixed(2)}</p>
+                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Execution Fees</label>
+                                <p class="text-xs font-mono font-bold text-gray-500">$${parseFloat(trade.commission || 0).toFixed(2)}</p>
                             </div>
-                             <div class="col-span-2">
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Analysis</label>
-                                ${trade.chart ? `<a href="${trade.chart}" target="_blank" class="text-xs font-bold text-indigo-600 underline" onclick="event.stopPropagation()">View Chart</a>` : '<span class="text-xs font-bold text-slate-300">No Chart</span>'}
+                            <div class="col-span-2 border-t border-gray-900/60 pt-3 flex items-center justify-between">
+                                <div>
+                                    <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Session Charts</label>
+                                    ${trade.chart ? `<a href="${trade.chart}" target="_blank" class="text-xs font-extrabold text-indigo-400 hover:underline flex items-center gap-1" onclick="event.stopPropagation()">View Setup <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : '<span class="text-xs font-bold text-gray-700">No Chart Attached</span>'}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -279,14 +425,20 @@
         function showModal(type) {
             const mod = document.getElementById('modalContainer');
             mod.innerHTML = `
-                <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] p-4">
-                    <div class="bg-white rounded-t-[32px] sm:rounded-[32px] p-8 w-full max-w-sm shadow-2xl animate-in slide-in-from-bottom duration-300">
-                        <div class="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-6"></div>
-                        <h2 class="text-xl font-black mb-4">Journal Info</h2>
-                        <p class="text-sm text-slate-500 leading-relaxed mb-8">
-                            Risk Warning: Trading involves significant risk. Content by Swapneel Das (NEELX Trader) is for educational purposes only and not financial advice.
+                <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center z-[100] p-4">
+                    <div class="bg-gray-950 border border-gray-800 rounded-t-[32px] sm:rounded-[32px] p-6 w-full max-w-sm shadow-2xl transition-all">
+                        <div class="w-12 h-1 bg-gray-800 rounded-full mx-auto mb-6"></div>
+                        <h2 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span class="text-indigo-400">NEELX PIPS</span> Terminal
+                        </h2>
+                        <p class="text-[11px] text-gray-400 leading-relaxed mb-6 font-mono">
+                            VER: 2026.1.5<br>
+                            BUILD: PRO_MOBILE_R1
                         </p>
-                        <button onclick="document.getElementById('modalContainer').innerHTML=''" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm">Got it</button>
+                        <p class="text-xs text-gray-500 leading-relaxed mb-6">
+                            Risk Warning: Derivative and leverage trading carry significant capital risk. Material distributed by Swapneel Das (NEELX PIPS) serves exclusively pedagogical functions.
+                        </p>
+                        <button onclick="document.getElementById('modalContainer').innerHTML=''" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition-colors tracking-wide uppercase">Close Console</button>
                     </div>
                 </div>
             `;
