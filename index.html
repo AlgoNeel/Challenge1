@@ -141,14 +141,6 @@
                     <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Win / Loss State</span>
                     <span id="statWinLoss" class="text-lg font-bold font-mono text-slate-300">0 / 0</span>
                 </div>
-                <div class="app-card p-4 rounded-xl text-center space-y-1">
-                    <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Net Yield</span>
-                    <span id="statTotalPips" class="text-lg font-bold font-mono text-indigo-400">0</span>
-                </div>
-                <div class="app-card p-4 rounded-xl text-center space-y-1">
-                    <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Profit Factor</span>
-                    <span id="calcProfitFactor" class="text-lg font-bold font-mono text-cyan-400">0.00</span>
-                </div>
             </div>
 
             <!-- Expanded mini metrics dashboard -->
@@ -445,7 +437,6 @@
             const percentageGrowth = appData.initialCapital > 0 ? ((totalNet / appData.initialCapital) * 100).toFixed(2) : "0.00";
             const winRatio = (wins + losses) > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
             const averageRValue = countREntries > 0 ? (sumRMultiple / countREntries).toFixed(1) : "0.0";
-            const profitFactor = totalLossesSum > 0 ? (totalProfitsSum / totalLossesSum).toFixed(2) : (totalProfitsSum > 0 ? "∞" : "0.00");
             
             const avgWin = wins > 0 ? (winPnlSum / wins).toFixed(2) : "0.00";
             const avgLoss = losses > 0 ? (lossPnlSum / losses).toFixed(2) : "0.00";
@@ -484,15 +475,10 @@
             // High-level statistics ribbon parameters
             document.getElementById('statTotalTrades').innerText = appData.trades.length;
             document.getElementById('statWinLoss').innerText = `${wins} / ${losses}`;
-            
-            const pipsBadge = document.getElementById('statTotalPips');
-            pipsBadge.innerText = `${totalPips > 0 ? '+' : ''}${totalPips}`;
-            pipsBadge.className = `text-lg font-bold font-mono ${totalPips >= 0 ? 'text-indigo-400' : 'text-rose-400'}`;
 
             document.getElementById('statAvgR').innerText = `${averageRValue}R`;
 
             // Expand sub statistics parameters
-            document.getElementById('calcProfitFactor').innerText = profitFactor;
             document.getElementById('calcWinRate').innerText = `${winRatio}%`;
             document.getElementById('calcAvgWin').innerText = `$${avgWin}`;
             document.getElementById('calcAvgLoss').innerText = `$${avgLoss}`;
