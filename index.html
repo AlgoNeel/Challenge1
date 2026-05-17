@@ -8,10 +8,10 @@
     <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1SVtH6H6NQ5qbq7BzT4vqk1SWoaggqpod">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
@@ -21,54 +21,64 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .premium-card {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(9, 13, 22, 0.95) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        /* Sophisticated Minimalist Borders & Backdrops */
+        .premium-border {
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        .premium-bg {
+            background-color: #090d16;
+        }
+
+        /* Subtle scrollbars */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 99px; }
         ::-webkit-scrollbar-thumb:hover { background: #374151; }
 
-        @keyframes pulse-radial {
-            0%, 100% { opacity: 0.1; transform: scale(1); }
-            50% { opacity: 0.2; transform: scale(1.1); }
+        /* Smooth accordion transitions */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .radial-glow {
-            animation: pulse-radial 8s infinite alternate;
+        .accordion-active .accordion-content {
+            max-height: 200px;
+        }
+        .accordion-chevron {
+            transition: transform 0.2s ease;
+        }
+        .accordion-active .accordion-chevron {
+            transform: rotate(180deg);
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
-    <!-- Ambient Radial Glow -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none radial-glow z-0"></div>
+<body class="flex flex-col min-h-screen selection:bg-indigo-500/30 selection:text-white">
 
     <!-- Header -->
-    <header class="bg-gray-950/80 backdrop-blur-xl border-b border-gray-900 sticky top-0 z-50 px-6 py-4">
+    <header class="bg-gray-950/40 backdrop-blur-md border-b border-gray-900 sticky top-0 z-50 px-6 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <!-- Brand Logo Container -->
-                <div class="bg-gradient-to-br from-gray-900 to-gray-950 p-1 rounded-xl border border-gray-800 shadow-xl w-11 h-11 flex items-center justify-center overflow-hidden">
+                <div class="bg-gradient-to-br from-gray-900 to-gray-950 p-1 rounded-xl border border-gray-800 shadow-md w-10 h-10 flex items-center justify-center overflow-hidden">
                     <img src="https://lh3.googleusercontent.com/d/1SVtH6H6NQ5qbq7BzT4vqk1SWoaggqpod" alt="NEELX Logo" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f172a%22/><path d=%22M30 40v20M30 45h6v10h-6z%22 stroke=%22%23818cf8%22 stroke-width=%224%22 fill=%22none%22/></svg>'">
                 </div>
                 <div>
-                    <h1 class="text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
-                        NEELX <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-black">PIPS</span>
-                        <span class="text-xs font-black bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-md">PORTAL</span>
+                    <h1 class="text-md font-bold text-white tracking-tight flex items-center gap-2">
+                        NEELX <span class="text-indigo-400 font-extrabold">PIPS</span>
+                        <span class="text-[9px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded">PORTAL</span>
                     </h1>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Automated Performance & Analytics Feed</p>
+                    <p class="text-[9px] text-gray-500 font-medium tracking-wide">Automated Performance & Advanced Analytics Feed</p>
                 </div>
             </div>
 
-            <!-- Reload Action Indicator -->
+            <!-- Reload Action Button -->
             <div>
-                <button onclick="fetchInitialJSON()" class="p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-bold text-gray-300 transition-colors flex items-center gap-2">
-                    <svg id="refreshIcon" class="animate-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <button onclick="fetchInitialJSON()" class="p-2 bg-gray-900 hover:bg-gray-800/80 border border-gray-800/80 rounded-lg text-xs font-semibold text-gray-300 transition-colors flex items-center gap-2">
+                    <svg id="refreshIcon" class="animate-none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
                     </svg>
-                    <span class="hidden sm:inline">Reload Feed</span>
+                    <span class="hidden sm:inline">Refresh Sync</span>
                 </button>
             </div>
         </div>
@@ -77,119 +87,130 @@
     <!-- Main Workspace -->
     <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-6 z-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Left Panel: Growth Preview & Goal Parameters -->
+        <!-- Left Panel: Milestones & Core Balance Stats -->
         <div class="space-y-6 lg:col-span-1">
             
-            <!-- Goal Milestones View Card -->
-            <div class="premium-card p-5 rounded-2xl border border-gray-900 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
-                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="12" r="6"></circle>
-                        <circle cx="12" cy="12" r="2"></circle>
-                    </svg>
-                    Milestone Parameters
-                </h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gray-950/50 p-3.5 rounded-xl border border-gray-900">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-wider block mb-1">Starting Capital</span>
-                        <span id="labelStartCap" class="text-lg font-black text-white font-mono">$0.00</span>
-                    </div>
-                    <div class="bg-gray-950/50 p-3.5 rounded-xl border border-gray-900">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-wider block mb-1">Target Capital</span>
-                        <span id="labelTargetCap" class="text-lg font-black text-indigo-400 font-mono">$0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Terminal Dashboard Live Overview -->
-            <div class="premium-card p-5 rounded-2xl border border-gray-900 relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Projected Progress
-                    </h2>
-                    <span id="challengeStatusBadge" class="text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Fetching...</span>
+            <!-- Milestone Progress & Balance Card Combined -->
+            <div class="premium-bg premium-border p-6 rounded-xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="challengeStatusBadge" class="text-[9px] font-bold px-2 py-0.5 rounded tracking-wider uppercase bg-gray-950 border border-gray-800 text-gray-400">Fetching...</span>
+                    <span class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">Goal Status</span>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="flex justify-between items-baseline">
-                        <div>
-                            <p class="text-[8px] font-bold text-gray-500 uppercase tracking-wider">Current Net Balance</p>
-                            <h3 id="previewBalance" class="text-2xl font-black text-white font-mono">$0.00</h3>
-                        </div>
-                        <span id="previewGrowth" class="text-xs font-mono font-extrabold text-gray-400">+0.00%</span>
-                    </div>
-
-                    <!-- Progress Bar Component -->
+                <div class="space-y-5">
                     <div>
-                        <div class="flex justify-between text-[8px] font-bold text-gray-500 mb-1 uppercase tracking-wider">
-                            <span id="previewTargetRangeLabel">Goal Completion Range</span>
-                            <span id="previewProgressPercent" class="text-indigo-400 font-mono">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-950 rounded-full h-1.5 border border-gray-900 overflow-hidden">
-                            <div id="previewProgressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        <p class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Account Balance</p>
+                        <h3 id="previewBalance" class="text-3xl font-extrabold text-white font-mono tracking-tight mt-0.5">$0.00</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="previewGrowth" class="text-xs font-mono font-bold text-gray-400">+0.00%</span>
+                            <span id="previewNetProfit" class="text-xs font-mono text-gray-500">+$0.00 net</span>
                         </div>
                     </div>
 
-                    <!-- Quick Analytics Block -->
-                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-900/60 text-[11px]">
+                    <!-- Milestone Range Tracker -->
+                    <div class="pt-3 border-t border-gray-900">
+                        <div class="flex justify-between text-[10px] text-gray-400 mb-2 font-medium">
+                            <span id="previewTargetRangeLabel">Goal Range</span>
+                            <span id="previewProgressPercent" class="text-indigo-400 font-semibold font-mono">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-950 rounded-full h-1 border border-gray-800 overflow-hidden">
+                            <div id="previewProgressBar" class="bg-indigo-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Milestone Limits details -->
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-900 text-xs">
                         <div>
-                            <span class="text-gray-500 block uppercase font-bold text-[8px]">Overall P&L</span>
-                            <span id="previewNetProfit" class="font-bold font-mono text-gray-400">+$0.00</span>
+                            <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Baseline Capital</span>
+                            <span id="labelStartCap" class="font-bold text-gray-300 font-mono">$0.00</span>
                         </div>
                         <div>
-                            <span class="text-gray-500 block uppercase font-bold text-[8px]">Win Ratio</span>
-                            <span id="previewWinRate" class="font-bold text-indigo-400">0%</span>
+                            <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Target Capital</span>
+                            <span id="labelTargetCap" class="font-bold text-indigo-400 font-mono">$0.00</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Connection Status -->
-            <div class="bg-gray-950/40 border border-gray-900 p-4 rounded-xl flex items-center justify-between text-[11px]">
-                <div class="flex items-center gap-2">
-                    <span id="indicatorPulse" class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                    <span class="text-gray-400 font-bold uppercase tracking-wider">Storage Sync</span>
+            <!-- Expanded Analytics Matrix (Calculated from trades array for deeper detail) -->
+            <div class="premium-bg premium-border p-5 rounded-xl space-y-4">
+                <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Calculated Performance Detail</h3>
+                
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Profit Factor</span>
+                        <span id="calcProfitFactor" class="font-mono font-bold text-white">0.00</span>
+                    </div>
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Win Ratio</span>
+                        <span id="calcWinRate" class="font-mono font-bold text-white">0%</span>
+                    </div>
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Best P&L</span>
+                        <span id="calcBestTrade" class="font-mono font-bold text-emerald-400">$0.00</span>
+                    </div>
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Worst P&L</span>
+                        <span id="calcWorstTrade" class="font-mono font-bold text-rose-400">$0.00</span>
+                    </div>
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Avg Win Size</span>
+                        <span id="calcAvgWin" class="font-mono font-bold text-emerald-500/90">$0.00</span>
+                    </div>
+                    <div class="bg-gray-950/40 p-3 rounded-lg border border-gray-900">
+                        <span class="text-[9px] text-gray-500 uppercase block mb-0.5">Avg Loss Size</span>
+                        <span id="calcAvgLoss" class="font-mono font-bold text-rose-500/90">$0.00</span>
+                    </div>
                 </div>
-                <span id="syncTimestamp" class="text-gray-500 font-mono">Standby</span>
+            </div>
+
+            <!-- Sync Connection Status -->
+            <div class="bg-gray-950/50 border border-gray-900 p-4 rounded-xl flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                    <span id="indicatorPulse" class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                    <span class="text-gray-400 font-semibold uppercase tracking-wider text-[9px]">Last Updated</span>
+                </div>
+                <span id="syncTimestamp" class="text-gray-500 font-mono text-[10px]">Standby</span>
             </div>
         </div>
 
-        <!-- Right Panel: Grid Dashboard of Metrics and Logs Feed -->
+        <!-- Right Panel: High-Impact Cards & Interactive Log View -->
         <div class="lg:col-span-2 space-y-6">
             
-            <!-- Statistics Panel grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Total Trades</span>
-                    <span id="statTotalTrades" class="text-xl font-bold font-mono text-white">0</span>
+            <!-- Quick Summary ribbon -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="premium-bg premium-border p-4 rounded-xl">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Total Executions</span>
+                    <span id="statTotalTrades" class="text-2xl font-bold font-mono text-white">0</span>
                 </div>
-                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Wins / Losses</span>
-                    <span id="statWinLoss" class="text-xl font-bold font-mono text-emerald-400">0 / 0</span>
+                <div class="premium-bg premium-border p-4 rounded-xl">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Win / Loss count</span>
+                    <span id="statWinLoss" class="text-2xl font-bold font-mono text-gray-300">0 - 0</span>
                 </div>
-                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Total Pips</span>
-                    <span id="statTotalPips" class="text-xl font-bold font-mono text-indigo-400">0</span>
+                <div class="premium-bg premium-border p-4 rounded-xl">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Net Yield (Pips)</span>
+                    <span id="statTotalPips" class="text-2xl font-bold font-mono text-indigo-400">0</span>
                 </div>
-                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Avg R-Multiple</span>
-                    <span id="statAvgR" class="text-xl font-bold font-mono text-cyan-400">0.0R</span>
+                <div class="premium-bg premium-border p-4 rounded-xl">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Average R-Mult</span>
+                    <span id="statAvgR" class="text-2xl font-bold font-mono text-cyan-400">0.0R</span>
                 </div>
             </div>
 
-            <!-- Filter and Interactive Visual Database Log -->
-            <div class="premium-card p-6 rounded-2xl border border-gray-900 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Execution Logs Feed</h3>
+            <!-- Detailed Logs Database section -->
+            <div class="premium-bg premium-border p-6 rounded-xl space-y-5">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-900 pb-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-white tracking-tight">Execution Database</h3>
+                        <p class="text-[10px] text-gray-500 mt-0.5">Click any logged item row to show full detailed parameters</p>
+                    </div>
                     
-                    <!-- Inline Search and Filters -->
+                    <!-- Search Input and Status Select Dropdown -->
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <input type="text" id="logSearch" placeholder="Search asset..." oninput="filterAndRenderLogs()" class="flex-1 sm:flex-initial px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500">
-                        <select id="logFilter" onchange="filterAndRenderLogs()" class="px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs font-bold text-gray-400 focus:outline-none focus:border-indigo-500">
+                        <div class="relative flex-1 sm:flex-initial">
+                            <input type="text" id="logSearch" placeholder="Search asset..." oninput="filterAndRenderLogs()" class="w-full sm:w-48 px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        </div>
+                        <select id="logFilter" onchange="filterAndRenderLogs()" class="px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs font-semibold text-gray-400 focus:outline-none focus:border-indigo-500">
                             <option value="All">All Statuses</option>
                             <option value="Win">Wins</option>
                             <option value="Loss">Losses</option>
@@ -198,17 +219,17 @@
                     </div>
                 </div>
 
-                <!-- Active Logs Feed Container -->
-                <div id="adminTradeList" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                    <!-- Loaded dynamically via scripts -->
+                <!-- Active Logs Container -->
+                <div id="adminTradeList" class="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
+                    <!-- Loaded dynamically -->
                 </div>
             </div>
         </div>
     </main>
 
     <!-- UI Notification System -->
-    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold rounded-xl shadow-2xl opacity-0 translate-y-2 pointer-events-none transition-all duration-300 uppercase tracking-wider flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold rounded-xl shadow-2xl opacity-0 translate-y-2 pointer-events-none transition-all duration-300 uppercase tracking-wider flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
         <span id="toastMessage">Updates Loaded</span>
     </div>
 
@@ -220,16 +241,19 @@
             trades: []
         };
 
-        // UI Toast Feedback helper
+        // Track active expanded row IDs
+        let activeExpandedRowId = null;
+
+        // UI Toast Notification helper
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMessage');
             
             toastMsg.innerText = message;
             if (isError) {
-                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-extrabold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
+                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
             } else {
-                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
+                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
             }
             
             toast.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
@@ -238,7 +262,7 @@
             }, 3000);
         }
 
-        // Dynamically request and sync data.json inside clean Read-Only constraints
+        // Dynamically request and sync data.json with local cache clearance
         async function fetchInitialJSON() {
             const refreshIcon = document.getElementById('refreshIcon');
             const indicatorPulse = document.getElementById('indicatorPulse');
@@ -246,7 +270,6 @@
             refreshIcon.classList.add('animate-spin');
             
             try {
-                // Ensure fresh data bypasses aggressive browser caching
                 const res = await fetch(`data.json?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -257,24 +280,25 @@
 
                     showToast("Database Synced!");
                     document.getElementById('syncTimestamp').innerText = new Date().toLocaleTimeString();
-                    indicatorPulse.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+                    indicatorPulse.className = "w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse";
                 } else {
                     throw new Error("Could not fetch the static database file.");
                 }
             } catch (e) {
-                console.error("No active data.json configuration file located. Using standard mock templates.", e);
-                showToast("Connection Error - Simulated Mode On", true);
+                console.error("No active data.json file found. Utilizing simulated feed configuration.", e);
+                showToast("Simulated Mode Active", true);
                 document.getElementById('syncTimestamp').innerText = "Simulated Feed";
-                indicatorPulse.className = "w-2 h-2 rounded-full bg-rose-500";
+                indicatorPulse.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
                 
-                // Fallback simulation layout
+                // Detailed Fallback Simulation
                 appData = {
                     initialCapital: 1000,
                     targetCapital: 2500,
                     trades: [
-                        { id: "1", asset: "XAUUSD", date: "2026-05-15", entry: "2350.20", exit: "2375.40", pnl: 450, result: "Win", pips: 252, r_multiple: "2.5", chart: "https://youtube.com" },
-                        { id: "2", asset: "EURUSD", date: "2026-05-14", entry: "1.0850", exit: "1.0810", pnl: -120, result: "Loss", pips: -40, r_multiple: "1.0" },
-                        { id: "3", asset: "GBPUSD", date: "2026-05-12", entry: "1.2540", exit: "---", pnl: 0, result: "Running", pips: 0, r_multiple: "---" }
+                        { id: "1", asset: "XAUUSD", date: "2026-05-15", entry: "2350.20", exit: "2375.40", sl: "2340.00", size: "150", commission: "7.50", pnl: 450, result: "Win", pips: 252, r_multiple: "2.5", chart: "https://youtube.com" },
+                        { id: "2", asset: "EURUSD", date: "2026-05-14", entry: "1.0850", exit: "1.0810", sl: "1.0870", size: "100", commission: "4.00", pnl: -120, result: "Loss", pips: -40, r_multiple: "1.0" },
+                        { id: "3", asset: "GBPUSD", date: "2026-05-12", entry: "1.2540", exit: "1.2660", sl: "1.2490", size: "150", commission: "6.00", pnl: 360, result: "Win", pips: 120, r_multiple: "2.4", chart: "https://youtube.com" },
+                        { id: "4", asset: "USDCAD", date: "2026-05-10", entry: "1.3720", exit: "---", sl: "1.3680", size: "80", commission: "2.50", pnl: 0, result: "Running", pips: 0, r_multiple: "---" }
                     ]
                 };
             } finally {
@@ -293,7 +317,7 @@
             filterAndRenderLogs();
         }
 
-        // Calculation algorithms
+        // Expanded Analytical Logic
         function calculateMetrics() {
             let totalNet = 0;
             let wins = 0;
@@ -302,13 +326,34 @@
             let sumRMultiple = 0;
             let countREntries = 0;
 
+            // Deep performance metrics
+            let totalProfitsSum = 0;
+            let totalLossesSum = 0;
+            let bestTradePnL = -Infinity;
+            let worstTradePnL = Infinity;
+            let winPnlSum = 0;
+            let lossPnlSum = 0;
+
             appData.trades.forEach(t => {
                 const pnl = parseFloat(t.pnl) || 0;
                 const commission = parseFloat(t.commission) || 0;
-                totalNet += (pnl - commission);
+                const netTradePnL = pnl - commission;
                 
-                if (t.result === 'Win') wins++;
-                else if (t.result === 'Loss') losses++;
+                totalNet += netTradePnL;
+                
+                if (t.result === 'Win') {
+                    wins++;
+                    totalProfitsSum += netTradePnL;
+                    winPnlSum += netTradePnL;
+                } else if (t.result === 'Loss') {
+                    losses++;
+                    totalLossesSum += Math.abs(netTradePnL);
+                    lossPnlSum += netTradePnL;
+                }
+
+                // Min/Max values
+                if (netTradePnL > bestTradePnL) bestTradePnL = netTradePnL;
+                if (netTradePnL < worstTradePnL) worstTradePnL = netTradePnL;
 
                 const pipsCount = parseFloat(t.pips) || 0;
                 totalPips += pipsCount;
@@ -320,13 +365,24 @@
                 }
             });
 
-            // Standard Calculations
+            // Adjust infinity checks in case of empty states
+            if (bestTradePnL === -Infinity) bestTradePnL = 0;
+            if (worstTradePnL === Infinity) worstTradePnL = 0;
+
+            // Calculations
             const currentBalance = appData.initialCapital + totalNet;
             const percentageGrowth = appData.initialCapital > 0 ? ((totalNet / appData.initialCapital) * 100).toFixed(2) : "0.00";
-            const winRatio = (wins + losses) > 0 ? (((wins / (wins + losses)) * 100).toFixed(0)) : 0;
+            const winRatio = (wins + losses) > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
             const averageRValue = countREntries > 0 ? (sumRMultiple / countREntries).toFixed(1) : "0.0";
+            
+            // Profit Factor calculation
+            const profitFactor = totalLossesSum > 0 ? (totalProfitsSum / totalLossesSum).toFixed(2) : (totalProfitsSum > 0 ? "∞" : "0.00");
+            
+            // Average win & loss sizes
+            const avgWin = wins > 0 ? (winPnlSum / wins).toFixed(2) : "0.00";
+            const avgLoss = losses > 0 ? (lossPnlSum / losses).toFixed(2) : "0.00";
 
-            // Update DOM Displays
+            // Update Left Overview Card Displays
             document.getElementById('previewBalance').innerText = `$${currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
             
             const previewGrowth = document.getElementById('previewGrowth');
@@ -334,22 +390,10 @@
             previewGrowth.className = `text-xs font-mono font-bold ${totalNet > 0 ? 'text-emerald-400' : (totalNet < 0 ? 'text-rose-400' : 'text-gray-400')}`;
 
             const previewNet = document.getElementById('previewNetProfit');
-            previewNet.innerText = `${totalNet >= 0 ? '+' : ''}$${totalNet.toFixed(2)}`;
-            previewNet.className = `font-bold font-mono ${totalNet > 0 ? 'text-emerald-400' : (totalNet < 0 ? 'text-rose-400' : 'text-gray-400')}`;
+            previewNet.innerText = `${totalNet >= 0 ? '+' : ''}$${totalNet.toFixed(2)} net`;
+            previewNet.className = `text-xs font-mono font-medium ${totalNet > 0 ? 'text-emerald-500/80' : (totalNet < 0 ? 'text-rose-500/80' : 'text-gray-500')}`;
 
-            document.getElementById('previewWinRate').innerText = `${winRatio}%`;
-            
-            // Goal status verification
-            const badge = document.getElementById('challengeStatusBadge');
-            if (currentBalance >= appData.targetCapital) {
-                badge.innerText = "PASSED";
-                badge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider animate-pulse";
-            } else {
-                badge.innerText = "ACTIVE";
-                badge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider";
-            }
-
-            // Milestone range visualization
+            // Milestone range indicator bar
             const boundsRange = appData.targetCapital - appData.initialCapital;
             const actualGrowth = currentBalance - appData.initialCapital;
             let completionPercent = 0;
@@ -360,18 +404,54 @@
             document.getElementById('previewProgressPercent').innerText = `${completionPercent}%`;
             document.getElementById('previewProgressBar').style.width = `${completionPercent}%`;
 
-            // Statistics Ribbon updates
+            // Goal status color indicators
+            const badge = document.getElementById('challengeStatusBadge');
+            if (currentBalance >= appData.targetCapital) {
+                badge.innerText = "PASSED";
+                badge.className = "text-[9px] font-black px-2 py-0.5 rounded border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 uppercase tracking-wider";
+            } else {
+                badge.innerText = "ACTIVE FEED";
+                badge.className = "text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/20 bg-indigo-500/10 text-indigo-400 uppercase tracking-wider";
+            }
+
+            // Stats Ribbon updates
             document.getElementById('statTotalTrades').innerText = appData.trades.length;
             document.getElementById('statWinLoss').innerText = `${wins} / ${losses}`;
             
             const pipsBadge = document.getElementById('statTotalPips');
             pipsBadge.innerText = `${totalPips > 0 ? '+' : ''}${totalPips}`;
-            pipsBadge.className = `text-xl font-bold font-mono ${totalPips >= 0 ? 'text-indigo-400' : 'text-rose-400'}`;
+            pipsBadge.className = `text-2xl font-bold font-mono ${totalPips >= 0 ? 'text-indigo-400' : 'text-rose-400'}`;
 
             document.getElementById('statAvgR').innerText = `${averageRValue}R`;
+
+            // Left Sidebar Detail calculations updates
+            document.getElementById('calcProfitFactor').innerText = profitFactor;
+            document.getElementById('calcWinRate').innerText = `${winRatio}%`;
+            document.getElementById('calcBestTrade').innerText = `$${bestTradePnL.toFixed(2)}`;
+            document.getElementById('calcWorstTrade').innerText = `$${worstTradePnL.toFixed(2)}`;
+            document.getElementById('calcAvgWin').innerText = `$${avgWin}`;
+            document.getElementById('calcAvgLoss').innerText = `$${avgLoss}`;
         }
 
-        // Live filtration system based on Read-Only interactive choices
+        // Toggle detailed item expansions inside the feed
+        function toggleRowAccordion(rowId) {
+            const container = document.getElementById(`accordion-${rowId}`);
+            if (!container) return;
+            
+            if (activeExpandedRowId === rowId) {
+                container.classList.remove('accordion-active');
+                activeExpandedRowId = null;
+            } else {
+                if (activeExpandedRowId !== null) {
+                    const activeRow = document.getElementById(`accordion-${activeExpandedRowId}`);
+                    if (activeRow) activeRow.classList.remove('accordion-active');
+                }
+                container.classList.add('accordion-active');
+                activeExpandedRowId = rowId;
+            }
+        }
+
+        // Live filtration system with elegant accordion containers
         function filterAndRenderLogs() {
             const listElement = document.getElementById('adminTradeList');
             const searchVal = document.getElementById('logSearch').value.toUpperCase().trim();
@@ -387,8 +467,8 @@
 
             if (filtered.length === 0) {
                 listElement.innerHTML = `
-                    <div class="text-center py-8 text-gray-600 text-xs uppercase tracking-widest font-mono">
-                        No match logs matched search queries
+                    <div class="text-center py-10 text-gray-600 text-xs uppercase tracking-widest font-mono">
+                        No trade logs match the criteria
                     </div>
                 `;
                 return;
@@ -401,38 +481,68 @@
                 else if (t.result === 'Win') tagClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                 else if (t.result === 'Loss') tagClass = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
 
-                const logItem = document.createElement('div');
-                logItem.className = "p-4 bg-gray-950/60 border border-gray-900 rounded-xl flex justify-between items-center gap-4 hover:border-gray-800 transition-colors duration-200";
+                const isExpanded = activeExpandedRowId === t.id;
+
+                const wrapper = document.createElement('div');
+                wrapper.id = `accordion-${t.id}`;
+                wrapper.className = `group bg-gray-950/40 border border-gray-900 rounded-xl transition-all duration-150 overflow-hidden ${isExpanded ? 'accordion-active' : ''}`;
                 
-                // Construct structure
-                logItem.innerHTML = `
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="font-extrabold text-sm text-white">${t.asset}</span>
-                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${tagClass}">${t.result || 'Closed'}</span>
-                            ${t.pips ? `<span class="text-[9px] font-mono font-bold text-indigo-400 bg-indigo-500/5 border border-indigo-500/10 px-1.5 py-0.2 rounded">${parseFloat(t.pips) > 0 ? '+' : ''}${t.pips} pips</span>` : ''}
-                            ${t.r_multiple && t.r_multiple !== '---' ? `<span class="text-[9px] font-mono font-bold text-cyan-400 bg-cyan-500/5 border border-cyan-500/10 px-1.5 py-0.2 rounded">${t.r_multiple}R</span>` : ''}
+                // Construct structure featuring detailed collapsible fields
+                wrapper.innerHTML = `
+                    <!-- Clickable Header Row -->
+                    <div onclick="toggleRowAccordion('${t.id}')" class="p-3.5 flex justify-between items-center gap-4 cursor-pointer hover:bg-gray-900/40 transition-colors">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-xs text-white tracking-tight">${t.asset}</span>
+                                <span class="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded ${tagClass}">${t.result || 'Closed'}</span>
+                                ${t.pips ? `<span class="text-[9px] font-mono font-medium text-indigo-400">${parseFloat(t.pips) > 0 ? '+' : ''}${t.pips} pips</span>` : ''}
+                            </div>
+                            <div class="text-[10px] text-gray-500 font-mono mt-0.5">
+                                ${t.date} • Yield: $${parseFloat(t.pnl || 0).toFixed(2)}
+                            </div>
                         </div>
-                        <div class="text-[10px] text-gray-500 font-mono mt-1 flex flex-wrap gap-x-3 gap-y-1">
-                            <span>Date: ${t.date}</span>
-                            <span>Entry: ${t.entry || '---'}</span>
-                            <span>Exit: ${t.exit || '---'}</span>
-                            <span>Risk: $${parseFloat(t.size || 0).toFixed(2)}</span>
-                            <span>PnL: $${parseFloat(t.pnl || 0).toFixed(2)}</span>
+                        
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-mono font-semibold ${parseFloat(t.pnl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                                ${parseFloat(t.pnl || 0) >= 0 ? '+' : ''}$${parseFloat(t.pnl || 0).toFixed(2)}
+                            </span>
+                            <svg class="accordion-chevron text-gray-600 group-hover:text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </div>
                     </div>
-                    ${t.chart ? `
-                        <a href="${t.chart}" target="_blank" rel="noopener noreferrer" class="p-2 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1">
-                            <span>Analysis</span>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        </a>
-                    ` : ''}
+
+                    <!-- Collapsible Technical parameters section -->
+                    <div class="accordion-content border-t border-gray-950 bg-gray-950/20">
+                        <div class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-[11px] text-gray-400">
+                            <div>
+                                <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Entry Level</span>
+                                <span class="font-mono font-bold text-white text-xs">${t.entry || '---'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Stop Loss / Exit</span>
+                                <span class="font-mono text-gray-300">${t.sl || '---'} / ${t.exit || '---'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Risk Taken / Commission</span>
+                                <span class="font-mono text-gray-300">$${parseFloat(t.size || 0).toFixed(2)} / $${parseFloat(t.commission || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                ${t.chart ? `
+                                    <a href="${t.chart}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 hover:text-white rounded-md text-[10px] font-bold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 justify-center w-full">
+                                        <span>Show Analysis</span>
+                                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                ` : '<span class="text-[10px] text-gray-600 italic text-center">No chart provided</span>'}
+                            </div>
+                        </div>
+                    </div>
                 `;
-                listElement.appendChild(logItem);
+                listElement.appendChild(wrapper);
             });
         }
 
-        // Initialize connection
+        // Initialize connections
         window.onload = function() {
             fetchInitialJSON();
         };
