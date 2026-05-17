@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NEELX PIPS | Mobile Journal</title>
-    <!-- Premium SVG Favicon matching the modern candles logo -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%23090d16%22/><path d=%22M30 38v24M30 44h6v12h-6z%22 fill=%22%23ef4444%22 stroke=%22%23ef4444%22 stroke-width=%221.5%22/><path d=%22M50 25v50M50 32h6v36h-6z%22 fill=%22%2310b981%22 stroke=%22%2310b981%22 stroke-width=%221.5%22/><path d=%22M70 45v18M70 49h6v10h-6z%22 fill=%22%2310b981%22 stroke=%22%2310b981%22 stroke-width=%221.5%22/></svg>">
+    <title>NEELX PIPS | Performance Dashboard</title>
+    <!-- Brand Favicon -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1SVtH6H6NQ5qbq7BzT4vqk1SWoaggqpod">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -15,17 +15,11 @@
             background-color: #030712;
             color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
         }
-
-        .safe-top { padding-top: env(safe-area-inset-top); }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
 
         .premium-card {
             background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(9, 13, 22, 0.95) 100%);
@@ -33,463 +27,415 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .trade-card {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .trade-card:active {
-            transform: scale(0.98);
-            background: rgba(17, 24, 39, 0.95);
-        }
-
-        .details-pane {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .details-pane.open {
-            max-height: 800px;
-        }
-
-        /* Pure Premium Gradients for trades */
-        .win-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .loss-gradient { background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); }
-        .be-gradient { background: linear-gradient(135deg, #64748b 0%, #475569 100%); }
-        .running-gradient { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-
-        .neon-glow-win { box-shadow: 0 0 15px rgba(16, 185, 129, 0.15); }
-        .neon-glow-loss { box-shadow: 0 0 15px rgba(244, 63, 94, 0.15); }
-        .neon-glow-running { box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
 
         @keyframes pulse-radial {
-            0%, 100% { opacity: 0.15; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.1); }
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(1.1); }
         }
         .radial-glow {
             animation: pulse-radial 8s infinite alternate;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-indigo-500 selection:text-white">
-    <!-- Ambient Radial Glow Behind Header -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none radial-glow z-0"></div>
+<body class="flex flex-col min-h-screen">
+    <!-- Ambient Radial Glow -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none radial-glow z-0"></div>
 
-    <div id="modalContainer"></div>
-
-    <!-- Header / Stats Section -->
-    <header class="safe-top bg-gray-950/80 backdrop-blur-xl border-b border-gray-900 sticky top-0 z-50">
-        <div class="px-5 py-4">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-gray-900 to-gray-950 p-2 rounded-xl border border-gray-800 shadow-xl flex-shrink-0">
-                        <!-- Neon Candlestick Brand Icon -->
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                            <rect x="3" y="10" width="4" height="6" rx="1" fill="#ef4444" />
-                            <line x1="5" y1="4" x2="5" y2="20" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
-                            
-                            <rect x="10" y="5" width="4" height="12" rx="1" fill="#10b981" />
-                            <line x1="12" y1="2" x2="12" y2="22" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
-                            
-                            <rect x="17" y="11" width="4" height="5" rx="1" fill="#10b981" />
-                            <line x1="19" y1="6" x2="19" y2="18" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h1 class="text-base font-extrabold text-white tracking-tight leading-none">
-                                NEELX <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-black">PIPS</span>
-                            </h1>
-                            <!-- $200 to $500 Challenge Subtitle badge -->
-                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 uppercase tracking-wider whitespace-nowrap">
-                                $200 to $500 Challenge
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Mobile Pro Terminal</p>
-                            <span class="text-[9px] text-gray-600 font-bold">•</span>
-                            <!-- Dynamic Challenge Status Badge -->
-                            <span id="challengeStatusBadge" class="text-[8px] font-black px-1 py-0.2 rounded uppercase tracking-wider transition-all duration-300">
-                                Fetching...
-                            </span>
-                        </div>
-                    </div>
+    <!-- Header -->
+    <header class="bg-gray-950/80 backdrop-blur-xl border-b border-gray-900 sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- Brand Logo Container -->
+                <div class="bg-gradient-to-br from-gray-900 to-gray-950 p-1 rounded-xl border border-gray-800 shadow-xl w-11 h-11 flex items-center justify-center overflow-hidden">
+                    <img src="https://lh3.googleusercontent.com/d/1SVtH6H6NQ5qbq7BzT4vqk1SWoaggqpod" alt="NEELX Logo" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f172a%22/><path d=%22M30 40v20M30 45h6v10h-6z%22 stroke=%22%23818cf8%22 stroke-width=%224%22 fill=%22none%22/></svg>'">
                 </div>
-                <div id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-black uppercase tracking-wider border border-emerald-500/20 flex-shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    LIVE SYNC
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
+                        NEELX <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-black">PIPS</span>
+                        <span class="text-xs font-black bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-md">PORTAL</span>
+                    </h1>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Automated Performance & Analytics Feed</p>
                 </div>
             </div>
 
-            <!-- Dashboard Card -->
-            <div class="premium-card rounded-2xl p-5 relative overflow-hidden border border-gray-800">
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                
-                <div class="relative z-10">
-                    <div class="flex justify-between items-center mb-1">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Current Balance</p>
-                        <span id="pnlValue" class="text-xs font-mono font-bold text-emerald-400">+$0.00</span>
-                    </div>
-                    <div class="flex items-baseline gap-2">
-                        <h2 id="currentBalance" class="text-3xl font-black text-white font-mono">$0.00</h2>
-                        <span id="pnlPercent" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">+0.00%</span>
-                    </div>
-
-                    <!-- Progress Bar to $500 Target -->
-                    <div class="mt-4">
-                        <div class="flex justify-between text-[9px] font-bold text-gray-500 mb-1 uppercase tracking-wider">
-                            <span>Target progress</span>
-                            <span id="progressText" class="text-indigo-400 font-mono">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-950 rounded-full h-1.5 border border-gray-900 overflow-hidden">
-                            <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-900">
-                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
-                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Initial Cap</p>
-                            <p id="displayCap" class="text-xs font-bold font-mono text-gray-300 mt-0.5">$0.00</p>
-                        </div>
-                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
-                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Win Rate</p>
-                            <p id="statWinRate" class="text-xs font-bold text-indigo-400 mt-0.5">0%</p>
-                        </div>
-                        <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
-                            <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Total Trades</p>
-                            <p id="statTotal" class="text-xs font-bold font-mono text-gray-300 mt-0.5">0</p>
-                        </div>
-                    </div>
-                </div>
+            <!-- Reload Action Indicator -->
+            <div>
+                <button onclick="fetchInitialJSON()" class="p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-bold text-gray-300 transition-colors flex items-center gap-2">
+                    <svg id="refreshIcon" class="animate-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                    </svg>
+                    <span class="hidden sm:inline">Reload Feed</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 px-5 py-4 z-10">
-        <!-- Dashboard Filters & Controls -->
-        <div class="mb-4">
-            <div class="flex gap-1 bg-gray-950 p-1 rounded-xl border border-gray-900">
-                <button onclick="filterTrades('all')" id="filter-all" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all bg-gray-900 text-white">All</button>
-                <button onclick="filterTrades('Win')" id="filter-Win" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Wins</button>
-                <button onclick="filterTrades('Loss')" id="filter-Loss" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Losses</button>
-                <button onclick="filterTrades('Running')" id="filter-Running" class="flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white">Active</button>
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-6 z-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Panel: Growth Preview & Goal Parameters -->
+        <div class="space-y-6 lg:col-span-1">
+            
+            <!-- Goal Milestones View Card -->
+            <div class="premium-card p-5 rounded-2xl border border-gray-900 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="6"></circle>
+                        <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                    Milestone Parameters
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-950/50 p-3.5 rounded-xl border border-gray-900">
+                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-wider block mb-1">Starting Capital</span>
+                        <span id="labelStartCap" class="text-lg font-black text-white font-mono">$0.00</span>
+                    </div>
+                    <div class="bg-gray-950/50 p-3.5 rounded-xl border border-gray-900">
+                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-wider block mb-1">Target Capital</span>
+                        <span id="labelTargetCap" class="text-lg font-black text-indigo-400 font-mono">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Dashboard Live Overview -->
+            <div class="premium-card p-5 rounded-2xl border border-gray-900 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Projected Progress
+                    </h2>
+                    <span id="challengeStatusBadge" class="text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Fetching...</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-baseline">
+                        <div>
+                            <p class="text-[8px] font-bold text-gray-500 uppercase tracking-wider">Current Net Balance</p>
+                            <h3 id="previewBalance" class="text-2xl font-black text-white font-mono">$0.00</h3>
+                        </div>
+                        <span id="previewGrowth" class="text-xs font-mono font-extrabold text-gray-400">+0.00%</span>
+                    </div>
+
+                    <!-- Progress Bar Component -->
+                    <div>
+                        <div class="flex justify-between text-[8px] font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                            <span id="previewTargetRangeLabel">Goal Completion Range</span>
+                            <span id="previewProgressPercent" class="text-indigo-400 font-mono">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-950 rounded-full h-1.5 border border-gray-900 overflow-hidden">
+                            <div id="previewProgressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Analytics Block -->
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-900/60 text-[11px]">
+                        <div>
+                            <span class="text-gray-500 block uppercase font-bold text-[8px]">Overall P&L</span>
+                            <span id="previewNetProfit" class="font-bold font-mono text-gray-400">+$0.00</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 block uppercase font-bold text-[8px]">Win Ratio</span>
+                            <span id="previewWinRate" class="font-bold text-indigo-400">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Status -->
+            <div class="bg-gray-950/40 border border-gray-900 p-4 rounded-xl flex items-center justify-between text-[11px]">
+                <div class="flex items-center gap-2">
+                    <span id="indicatorPulse" class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Storage Sync</span>
+                </div>
+                <span id="syncTimestamp" class="text-gray-500 font-mono">Standby</span>
             </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="mb-5 relative">
-            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search asset (e.g. XAUUSD)..." class="w-full bg-gray-950 border border-gray-900 rounded-xl px-4 py-3 pl-10 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 transition-colors">
-            <div class="absolute left-3.5 top-3.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <!-- Right Panel: Grid Dashboard of Metrics and Logs Feed -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Statistics Panel grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
+                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Total Trades</span>
+                    <span id="statTotalTrades" class="text-xl font-bold font-mono text-white">0</span>
+                </div>
+                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
+                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Wins / Losses</span>
+                    <span id="statWinLoss" class="text-xl font-bold font-mono text-emerald-400">0 / 0</span>
+                </div>
+                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
+                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Total Pips</span>
+                    <span id="statTotalPips" class="text-xl font-bold font-mono text-indigo-400">0</span>
+                </div>
+                <div class="premium-card p-4 rounded-xl border border-gray-900 text-center">
+                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">Avg R-Multiple</span>
+                    <span id="statAvgR" class="text-xl font-bold font-mono text-cyan-400">0.0R</span>
+                </div>
             </div>
-        </div>
 
-        <div class="flex justify-between items-center mb-4 px-1">
-            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Active Pip Feeds</h3>
-            <div class="text-[10px] font-bold text-indigo-400">
-                <span id="statDuration">0</span> TRADING DAYS
-            </div>
-        </div>
+            <!-- Filter and Interactive Visual Database Log -->
+            <div class="premium-card p-6 rounded-2xl border border-gray-900 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Execution Logs Feed</h3>
+                    
+                    <!-- Inline Search and Filters -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <input type="text" id="logSearch" placeholder="Search asset..." oninput="filterAndRenderLogs()" class="flex-1 sm:flex-initial px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500">
+                        <select id="logFilter" onchange="filterAndRenderLogs()" class="px-3 py-1.5 bg-gray-950 border border-gray-900 rounded-lg text-xs font-bold text-gray-400 focus:outline-none focus:border-indigo-500">
+                            <option value="All">All Statuses</option>
+                            <option value="Win">Wins</option>
+                            <option value="Loss">Losses</option>
+                            <option value="Running">Running</option>
+                        </select>
+                    </div>
+                </div>
 
-        <!-- Trade Cards List Container -->
-        <div id="tradeList" class="space-y-3">
-            <div class="animate-pulse flex flex-col gap-3">
-                <div class="h-20 bg-gray-900/50 border border-gray-900 rounded-2xl w-full"></div>
-                <div class="h-20 bg-gray-900/50 border border-gray-900 rounded-2xl w-full"></div>
+                <!-- Active Logs Feed Container -->
+                <div id="adminTradeList" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                    <!-- Loaded dynamically via scripts -->
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Bottom Footer -->
-    <footer class="bg-gray-950/80 backdrop-blur-md border-t border-gray-900 px-6 py-4 pb-8 mt-auto z-10">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
-                <p class="text-[9px] text-gray-500 font-extrabold uppercase tracking-wider">&copy; 2026 Swapneel Das</p>
-            </div>
-            <button onclick="showModal('disclaimer')" class="text-[9px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">Disclaimer</button>
-        </div>
-    </footer>
+    <!-- UI Notification System -->
+    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold rounded-xl shadow-2xl opacity-0 translate-y-2 pointer-events-none transition-all duration-300 uppercase tracking-wider flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="toastMessage">Updates Loaded</span>
+    </div>
 
+    <!-- Live Performance Visualizer Logic -->
     <script>
-        let trades = [];
-        let initialCapital = 0;
-        let currentFilter = 'all';
-        let searchQuery = '';
+        let appData = {
+            initialCapital: 0,
+            targetCapital: 0,
+            trades: []
+        };
 
-        async function loadData() {
+        // UI Toast Feedback helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            
+            toastMsg.innerText = message;
+            if (isError) {
+                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-extrabold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
+            } else {
+                toast.className = "fixed bottom-6 right-6 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold rounded-xl shadow-2xl transition-all duration-300 uppercase tracking-wider flex items-center gap-2";
+            }
+            
+            toast.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Dynamically request and sync data.json inside clean Read-Only constraints
+        async function fetchInitialJSON() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            const indicatorPulse = document.getElementById('indicatorPulse');
+            
+            refreshIcon.classList.add('animate-spin');
+            
             try {
-                // Fetch direct read-only data from the data.json source
-                const response = await fetch(`data.json?t=${Date.now()}`);
-                if (!response.ok) {
-                    throw new Error("Could not load data.json. Ensure file exists and is populated.");
+                // Ensure fresh data bypasses aggressive browser caching
+                const res = await fetch(`data.json?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    appData.initialCapital = typeof data.initialCapital !== 'undefined' ? parseFloat(data.initialCapital) : 200;
+                    appData.targetCapital = typeof data.targetCapital !== 'undefined' ? parseFloat(data.targetCapital) : 500;
+                    appData.trades = Array.isArray(data.trades) ? data.trades : [];
+
+                    showToast("Database Synced!");
+                    document.getElementById('syncTimestamp').innerText = new Date().toLocaleTimeString();
+                    indicatorPulse.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+                } else {
+                    throw new Error("Could not fetch the static database file.");
                 }
+            } catch (e) {
+                console.error("No active data.json configuration file located. Using standard mock templates.", e);
+                showToast("Connection Error - Simulated Mode On", true);
+                document.getElementById('syncTimestamp').innerText = "Simulated Feed";
+                indicatorPulse.className = "w-2 h-2 rounded-full bg-rose-500";
                 
-                const data = await response.json();
-                trades = data.trades || [];
-                initialCapital = data.initialCapital || 0;
-                
-                render();
-            } catch (err) {
-                console.error(err);
-                const syncBadge = document.getElementById('syncStatus');
-                if (syncBadge) {
-                    syncBadge.innerHTML = 'SYNC ERROR';
-                    syncBadge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-[9px] font-black uppercase tracking-wider border border-rose-500/20";
-                }
-                document.getElementById('tradeList').innerHTML = `
-                    <div class="text-center py-12 bg-gray-950/30 border border-rose-950/50 rounded-2xl">
-                        <svg class="mx-auto mb-3 text-rose-500/60" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <p class="text-xs font-extrabold text-rose-400 uppercase tracking-widest">Failed to load data.json</p>
-                        <p class="text-[10px] text-gray-600 mt-1 font-mono">Please verify the file setup.</p>
-                    </div>
-                `;
+                // Fallback simulation layout
+                appData = {
+                    initialCapital: 1000,
+                    targetCapital: 2500,
+                    trades: [
+                        { id: "1", asset: "XAUUSD", date: "2026-05-15", entry: "2350.20", exit: "2375.40", pnl: 450, result: "Win", pips: 252, r_multiple: "2.5", chart: "https://youtube.com" },
+                        { id: "2", asset: "EURUSD", date: "2026-05-14", entry: "1.0850", exit: "1.0810", pnl: -120, result: "Loss", pips: -40, r_multiple: "1.0" },
+                        { id: "3", asset: "GBPUSD", date: "2026-05-12", entry: "1.2540", exit: "---", pnl: 0, result: "Running", pips: 0, r_multiple: "---" }
+                    ]
+                };
+            } finally {
+                setTimeout(() => {
+                    refreshIcon.classList.remove('animate-spin');
+                }, 500);
+                syncEngine();
             }
         }
 
-        function calculateStats() {
-            let net = 0, wins = 0, losses = 0, uniqueDates = new Set();
-            trades.forEach(t => {
+        // Align interface and refresh analytics models
+        function syncEngine() {
+            document.getElementById('labelStartCap').innerText = `$${appData.initialCapital.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            document.getElementById('labelTargetCap').innerText = `$${appData.targetCapital.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            calculateMetrics();
+            filterAndRenderLogs();
+        }
+
+        // Calculation algorithms
+        function calculateMetrics() {
+            let totalNet = 0;
+            let wins = 0;
+            let losses = 0;
+            let totalPips = 0;
+            let sumRMultiple = 0;
+            let countREntries = 0;
+
+            appData.trades.forEach(t => {
                 const pnl = parseFloat(t.pnl) || 0;
-                const fee = parseFloat(t.commission) || 0;
-                net += (pnl - fee);
+                const commission = parseFloat(t.commission) || 0;
+                totalNet += (pnl - commission);
+                
                 if (t.result === 'Win') wins++;
                 else if (t.result === 'Loss') losses++;
-                if (t.date) uniqueDates.add(t.date);
+
+                const pipsCount = parseFloat(t.pips) || 0;
+                totalPips += pipsCount;
+
+                const rMult = parseFloat(t.r_multiple);
+                if (!isNaN(rMult)) {
+                    sumRMultiple += rMult;
+                    countREntries++;
+                }
             });
 
-            const current = initialCapital + net;
-            const growth = initialCapital > 0 ? ((net / initialCapital) * 100).toFixed(2) : "0.00";
-            
-            document.getElementById('displayCap').innerText = `$${initialCapital.toLocaleString()}`;
-            document.getElementById('currentBalance').innerText = `$${current.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-            
-            const pnlValueEl = document.getElementById('pnlValue');
-            pnlValueEl.innerText = `${net >= 0 ? '+' : ''}$${net.toFixed(2)}`;
-            pnlValueEl.className = `text-xs font-mono font-bold ${net >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            // Standard Calculations
+            const currentBalance = appData.initialCapital + totalNet;
+            const percentageGrowth = appData.initialCapital > 0 ? ((totalNet / appData.initialCapital) * 100).toFixed(2) : "0.00";
+            const winRatio = (wins + losses) > 0 ? (((wins / (wins + losses)) * 100).toFixed(0)) : 0;
+            const averageRValue = countREntries > 0 ? (sumRMultiple / countREntries).toFixed(1) : "0.0";
 
-            const pnlEl = document.getElementById('pnlPercent');
-            pnlEl.innerText = `${net >= 0 ? '+' : ''}${growth}%`;
-            pnlEl.className = `text-[10px] font-extrabold px-2 py-0.5 rounded ${net >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`;
+            // Update DOM Displays
+            document.getElementById('previewBalance').innerText = `$${currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
             
-            document.getElementById('statTotal').innerText = trades.length;
-            const wr = (wins + losses) > 0 ? ((wins / (wins + losses)) * 100).toFixed(0) : 0;
-            document.getElementById('statWinRate').innerText = `${wr}%`;
-            document.getElementById('statDuration').innerText = uniqueDates.size;
+            const previewGrowth = document.getElementById('previewGrowth');
+            previewGrowth.innerText = `${totalNet >= 0 ? '+' : ''}${percentageGrowth}%`;
+            previewGrowth.className = `text-xs font-mono font-bold ${totalNet > 0 ? 'text-emerald-400' : (totalNet < 0 ? 'text-rose-400' : 'text-gray-400')}`;
 
-            // --- Challenge Logic ($200 to $500) ---
-            const startAmount = 200;
-            const targetAmount = 500;
-            const statusBadge = document.getElementById('challengeStatusBadge');
+            const previewNet = document.getElementById('previewNetProfit');
+            previewNet.innerText = `${totalNet >= 0 ? '+' : ''}$${totalNet.toFixed(2)}`;
+            previewNet.className = `font-bold font-mono ${totalNet > 0 ? 'text-emerald-400' : (totalNet < 0 ? 'text-rose-400' : 'text-gray-400')}`;
+
+            document.getElementById('previewWinRate').innerText = `${winRatio}%`;
             
-            // Dynamic ongoing vs passed determination
-            if (current >= targetAmount) {
-                statusBadge.innerText = 'PASSED';
-                statusBadge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider animate-pulse";
+            // Goal status verification
+            const badge = document.getElementById('challengeStatusBadge');
+            if (currentBalance >= appData.targetCapital) {
+                badge.innerText = "PASSED";
+                badge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider animate-pulse";
             } else {
-                statusBadge.innerText = 'ONGOING';
-                statusBadge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider";
+                badge.innerText = "ACTIVE";
+                badge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider";
             }
 
-            // Progress bar math
-            const progressRange = targetAmount - startAmount;
-            const progressGained = current - startAmount;
-            let progressPercent = 0;
-            if (progressGained > 0) {
-                progressPercent = Math.min(100, Math.round((progressGained / progressRange) * 100));
+            // Milestone range visualization
+            const boundsRange = appData.targetCapital - appData.initialCapital;
+            const actualGrowth = currentBalance - appData.initialCapital;
+            let completionPercent = 0;
+            if (boundsRange > 0 && actualGrowth > 0) {
+                completionPercent = Math.min(100, Math.round((actualGrowth / boundsRange) * 100));
             }
-            // Safeguard for negative balance or start values
-            if (progressPercent < 0) progressPercent = 0;
+            document.getElementById('previewTargetRangeLabel').innerText = `Goal progress ($${Math.round(appData.initialCapital)} to $${Math.round(appData.targetCapital)})`;
+            document.getElementById('previewProgressPercent').innerText = `${completionPercent}%`;
+            document.getElementById('previewProgressBar').style.width = `${completionPercent}%`;
 
-            document.getElementById('progressText').innerText = `${progressPercent}%`;
-            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+            // Statistics Ribbon updates
+            document.getElementById('statTotalTrades').innerText = appData.trades.length;
+            document.getElementById('statWinLoss').innerText = `${wins} / ${losses}`;
+            
+            const pipsBadge = document.getElementById('statTotalPips');
+            pipsBadge.innerText = `${totalPips > 0 ? '+' : ''}${totalPips}`;
+            pipsBadge.className = `text-xl font-bold font-mono ${totalPips >= 0 ? 'text-indigo-400' : 'text-rose-400'}`;
+
+            document.getElementById('statAvgR').innerText = `${averageRValue}R`;
         }
 
-        function toggleDetails(id) {
-            const pane = document.getElementById(`pane-${id}`);
-            const chevron = document.getElementById(`chev-${id}`);
-            if (!pane) return;
-            const isOpen = pane.classList.toggle('open');
-            chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
+        // Live filtration system based on Read-Only interactive choices
+        function filterAndRenderLogs() {
+            const listElement = document.getElementById('adminTradeList');
+            const searchVal = document.getElementById('logSearch').value.toUpperCase().trim();
+            const filterVal = document.getElementById('logFilter').value;
 
-        function filterTrades(filterType) {
-            currentFilter = filterType;
-            const buttons = ['all', 'Win', 'Loss', 'Running'];
-            buttons.forEach(b => {
-                const btn = document.getElementById(`filter-${b}`);
-                if (b === filterType) {
-                    btn.className = "flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all bg-gray-900 text-white";
-                } else {
-                    btn.className = "flex-1 text-center py-2 rounded-lg text-xs font-extrabold uppercase transition-all text-gray-500 hover:text-white";
-                }
+            listElement.innerHTML = "";
+
+            const filtered = appData.trades.filter(t => {
+                const assetMatches = t.asset.toUpperCase().includes(searchVal);
+                const statusMatches = (filterVal === "All") || (t.result === filterVal);
+                return assetMatches && statusMatches;
             });
-            render();
-        }
 
-        function handleSearch() {
-            searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            render();
-        }
-
-        function render() {
-            const container = document.getElementById('tradeList');
-            container.innerHTML = '';
-
-            let filteredTrades = [...trades];
-
-            // Apply Filters
-            if (currentFilter !== 'all') {
-                if (currentFilter === 'Running') {
-                    filteredTrades = filteredTrades.filter(t => !t.exit || t.exit === "" || t.result === 'Running');
-                } else {
-                    filteredTrades = filteredTrades.filter(t => t.result === currentFilter);
-                }
-            }
-
-            // Apply Search Query
-            if (searchQuery.trim() !== '') {
-                filteredTrades = filteredTrades.filter(t => t.asset.toLowerCase().includes(searchQuery));
-            }
-
-            // Sort trades chronologically descending
-            filteredTrades.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
-
-            if (filteredTrades.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 bg-gray-950/30 border border-gray-900/50 rounded-2xl">
-                        <svg class="mx-auto mb-3 text-gray-700" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line>
-                        </svg>
-                        <p class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">No matching pip feeds</p>
+            if (filtered.length === 0) {
+                listElement.innerHTML = `
+                    <div class="text-center py-8 text-gray-600 text-xs uppercase tracking-widest font-mono">
+                        No match logs matched search queries
                     </div>
                 `;
-                calculateStats();
                 return;
             }
 
-            filteredTrades.forEach((trade, index) => {
-                const tradeId = trade.id || index;
-                const isRunning = !trade.exit || trade.exit === "" || trade.result === 'Running';
-                const net = (parseFloat(trade.pnl) || 0) - (parseFloat(trade.commission) || 0);
-                
-                let gradClass = 'be-gradient';
-                let glowClass = '';
-                let pnlDisplay = `$${net.toFixed(2)}`;
-                let statusLabel = "CLOSED";
-                let statusColor = "text-gray-400";
+            filtered.forEach(t => {
+                const isRunning = t.result === 'Running';
+                let tagClass = "bg-slate-500/10 text-slate-400 border border-slate-500/20";
+                if (isRunning) tagClass = "bg-blue-500/10 text-blue-400 border border-blue-500/20";
+                else if (t.result === 'Win') tagClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                else if (t.result === 'Loss') tagClass = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
 
-                if (isRunning) {
-                    gradClass = 'running-gradient';
-                    glowClass = 'neon-glow-running';
-                    pnlDisplay = "LIVE";
-                    statusLabel = "ACTIVE RUN";
-                    statusColor = "text-blue-400";
-                } else if (trade.result === 'Win') {
-                    gradClass = 'win-gradient';
-                    glowClass = 'neon-glow-win';
-                    statusColor = "text-emerald-400";
-                } else if (trade.result === 'Loss') {
-                    gradClass = 'loss-gradient';
-                    glowClass = 'neon-glow-loss';
-                    statusColor = "text-rose-400";
-                }
-
-                const card = document.createElement('div');
-                card.className = `trade-card bg-gray-950/50 border border-gray-900 rounded-2xl overflow-hidden mb-3 hover:border-gray-800 ${glowClass}`;
+                const logItem = document.createElement('div');
+                logItem.className = "p-4 bg-gray-950/60 border border-gray-900 rounded-xl flex justify-between items-center gap-4 hover:border-gray-800 transition-colors duration-200";
                 
-                card.innerHTML = `
-                    <div class="p-4 flex items-center gap-4 cursor-pointer" onclick="toggleDetails('${tradeId}')">
-                        <div class="w-1.5 h-10 rounded-full ${gradClass}"></div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-extrabold text-white text-sm uppercase tracking-tight flex items-center gap-1.5">
-                                    ${trade.asset}
-                                    ${trade.pips ? `<span class="text-[9px] font-mono font-bold bg-gray-900 text-gray-400 border border-gray-800/80 px-1.5 py-0.2 rounded">${trade.pips > 0 ? '+' : ''}${trade.pips} pips</span>` : ''}
-                                </h4>
-                                <span class="text-xs font-mono font-extrabold ${isRunning ? 'text-blue-400' : (net >= 0 ? 'text-emerald-400' : 'text-rose-400')}">
-                                    ${pnlDisplay}
-                                </span>
-                            </div>
-                            <div class="flex justify-between items-center mt-1">
-                                <p class="text-[9px] font-bold text-gray-500 uppercase font-mono">${trade.date}</p>
-                                <span class="text-[9px] font-black ${statusColor} uppercase tracking-widest flex items-center gap-1">
-                                    <span class="w-1 h-1 rounded-full ${isRunning ? 'bg-blue-400 animate-ping' : (net >= 0 ? 'bg-emerald-400' : 'bg-rose-400')}"></span>
-                                    ${statusLabel} • ${trade.r_multiple || '0'}R
-                                </span>
-                            </div>
+                // Construct structure
+                logItem.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-extrabold text-sm text-white">${t.asset}</span>
+                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${tagClass}">${t.result || 'Closed'}</span>
+                            ${t.pips ? `<span class="text-[9px] font-mono font-bold text-indigo-400 bg-indigo-500/5 border border-indigo-500/10 px-1.5 py-0.2 rounded">${parseFloat(t.pips) > 0 ? '+' : ''}${t.pips} pips</span>` : ''}
+                            ${t.r_multiple && t.r_multiple !== '---' ? `<span class="text-[9px] font-mono font-bold text-cyan-400 bg-cyan-500/5 border border-cyan-500/10 px-1.5 py-0.2 rounded">${t.r_multiple}R</span>` : ''}
                         </div>
-                        <div id="chev-${tradeId}" class="transition-transform duration-300 text-gray-600">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <div class="text-[10px] text-gray-500 font-mono mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                            <span>Date: ${t.date}</span>
+                            <span>Entry: ${t.entry || '---'}</span>
+                            <span>Exit: ${t.exit || '---'}</span>
+                            <span>Risk: $${parseFloat(t.size || 0).toFixed(2)}</span>
+                            <span>PnL: $${parseFloat(t.pnl || 0).toFixed(2)}</span>
                         </div>
                     </div>
-                    
-                    <div id="pane-${tradeId}" class="details-pane bg-gray-950/80 border-t border-gray-900">
-                        <div class="p-5 grid grid-cols-2 gap-y-4 gap-x-6">
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Execution Status</label>
-                                <p class="text-xs font-extrabold ${statusColor}">${statusLabel}</p>
-                            </div>
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Entry Target</label>
-                                <p class="text-xs font-mono font-bold text-white">${trade.entry || '---'}</p>
-                            </div>
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Absolute Protection (SL)</label>
-                                <p class="text-xs font-mono font-bold text-rose-500">${trade.sl || trade.stop_loss || '---'}</p>
-                            </div>
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Target Limit / Exit</label>
-                                <p class="text-xs font-mono font-bold ${isRunning ? 'text-gray-600' : 'text-emerald-400'}">${trade.exit || trade.tp || 'OPEN FEED'}</p>
-                            </div>
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Risk Exposure</label>
-                                <p class="text-xs font-mono font-bold text-gray-400">$${parseFloat(trade.size || 0).toFixed(2)}</p>
-                            </div>
-                            <div>
-                                <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Execution Fees</label>
-                                <p class="text-xs font-mono font-bold text-gray-500">$${parseFloat(trade.commission || 0).toFixed(2)}</p>
-                            </div>
-                            <div class="col-span-2 border-t border-gray-900/60 pt-3 flex items-center justify-between">
-                                <div>
-                                    <label class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Session Charts</label>
-                                    ${trade.chart ? `<a href="${trade.chart}" target="_blank" class="text-xs font-extrabold text-indigo-400 hover:underline flex items-center gap-1" onclick="event.stopPropagation()">View Setup <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : '<span class="text-xs font-bold text-gray-700">No Chart Attached</span>'}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    ${t.chart ? `
+                        <a href="${t.chart}" target="_blank" rel="noopener noreferrer" class="p-2 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1">
+                            <span>Analysis</span>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    ` : ''}
                 `;
-                container.appendChild(card);
+                listElement.appendChild(logItem);
             });
-            calculateStats();
         }
 
-        function showModal(type) {
-            const mod = document.getElementById('modalContainer');
-            mod.innerHTML = `
-                <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center z-[100] p-4">
-                    <div class="bg-gray-950 border border-gray-800 rounded-t-[32px] sm:rounded-[32px] p-6 w-full max-w-sm shadow-2xl transition-all">
-                        <div class="w-12 h-1 bg-gray-800 rounded-full mx-auto mb-6"></div>
-                        <h2 class="text-lg font-black text-white mb-2 flex items-center gap-2">
-                            <span class="text-indigo-400">NEELX PIPS</span> Terminal
-                        </h2>
-                        <p class="text-[11px] text-gray-400 leading-relaxed mb-6 font-mono">
-                            VER: 2026.1.6<br>
-                            BUILD: PRO_MOBILE_R2
-                        </p>
-                        <p class="text-xs text-gray-500 leading-relaxed mb-6">
-                            Risk Warning: Derivative and leverage trading carry significant capital risk. Material distributed by Swapneel Das (NEELX PIPS) serves exclusively pedagogical functions.
-                        </p>
-                        <button onclick="document.getElementById('modalContainer').innerHTML=''" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition-colors tracking-wide uppercase">Close Console</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        window.onload = loadData;
+        // Initialize connection
+        window.onload = function() {
+            fetchInitialJSON();
+        };
     </script>
 </body>
 </html>
