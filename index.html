@@ -105,7 +105,14 @@
                                 $200 to $500 Challenge
                             </span>
                         </div>
-                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">Mobile Pro Terminal</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Mobile Pro Terminal</p>
+                            <span class="text-[9px] text-gray-600 font-bold">•</span>
+                            <!-- Dynamic Challenge Status Badge -->
+                            <span id="challengeStatusBadge" class="text-[8px] font-black px-1 py-0.2 rounded uppercase tracking-wider transition-all duration-300">
+                                Fetching...
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-black uppercase tracking-wider border border-emerald-500/20 flex-shrink-0">
@@ -127,8 +134,19 @@
                         <h2 id="currentBalance" class="text-3xl font-black text-white font-mono">$0.00</h2>
                         <span id="pnlPercent" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">+0.00%</span>
                     </div>
+
+                    <!-- Progress Bar to $500 Target -->
+                    <div class="mt-4">
+                        <div class="flex justify-between text-[9px] font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                            <span>Target progress</span>
+                            <span id="progressText" class="text-indigo-400 font-mono">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-950 rounded-full h-1.5 border border-gray-900 overflow-hidden">
+                            <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
                     
-                    <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-gray-900">
+                    <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-900">
                         <div class="bg-gray-950/40 p-2 rounded-lg border border-gray-900/50">
                             <p class="text-[8px] font-extrabold text-gray-500 uppercase tracking-wider">Initial Cap</p>
                             <p id="displayCap" class="text-xs font-bold font-mono text-gray-300 mt-0.5">$0.00</p>
@@ -261,6 +279,33 @@
             const wr = (wins + losses) > 0 ? ((wins / (wins + losses)) * 100).toFixed(0) : 0;
             document.getElementById('statWinRate').innerText = `${wr}%`;
             document.getElementById('statDuration').innerText = uniqueDates.size;
+
+            // --- Challenge Logic ($200 to $500) ---
+            const startAmount = 200;
+            const targetAmount = 500;
+            const statusBadge = document.getElementById('challengeStatusBadge');
+            
+            // Dynamic ongoing vs passed determination
+            if (current >= targetAmount) {
+                statusBadge.innerText = 'PASSED';
+                statusBadge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider animate-pulse";
+            } else {
+                statusBadge.innerText = 'ONGOING';
+                statusBadge.className = "text-[8px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider";
+            }
+
+            // Progress bar math
+            const progressRange = targetAmount - startAmount;
+            const progressGained = current - startAmount;
+            let progressPercent = 0;
+            if (progressGained > 0) {
+                progressPercent = Math.min(100, Math.round((progressGained / progressRange) * 100));
+            }
+            // Safeguard for negative balance or start values
+            if (progressPercent < 0) progressPercent = 0;
+
+            document.getElementById('progressText').innerText = `${progressPercent}%`;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
         }
 
         function toggleDetails(id) {
@@ -432,8 +477,8 @@
                             <span class="text-indigo-400">NEELX PIPS</span> Terminal
                         </h2>
                         <p class="text-[11px] text-gray-400 leading-relaxed mb-6 font-mono">
-                            VER: 2026.1.5<br>
-                            BUILD: PRO_MOBILE_R1
+                            VER: 2026.1.6<br>
+                            BUILD: PRO_MOBILE_R2
                         </p>
                         <p class="text-xs text-gray-500 leading-relaxed mb-6">
                             Risk Warning: Derivative and leverage trading carry significant capital risk. Material distributed by Swapneel Das (NEELX PIPS) serves exclusively pedagogical functions.
